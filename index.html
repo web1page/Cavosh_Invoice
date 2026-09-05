@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CAVOSH Invoice Pro - سامانه فاکتورسازی حرفه‌ای</title>
+    <link rel="icon" type="image/png" href="./logo01.png">
+    <!-- بهبود فونت: استفاده از Vazirmatn از گوگل فونت -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        :root {
+            --primary: #c8102e;
+            --dark: #171717;
+            --light: #f5f5f5;
+            --border: #ddd;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --radius: 8px;
+        }
+        
+        body {
+            font-family: 'Vazirmatn', 'Vazir', 'IRANSans', Tahoma, sans-serif;
+            background: #f0f2f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .app {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            min-height: 100vh;
+            gap: 0;
+        }
+        
+        /* ============ Sidebar ============ */
+        .side {
+            background: #fff;
+            padding: 20px;
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+            max-height: 100vh;
+            position: sticky;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+        
+        .side h1 {
+            font-size: 24px;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        
+        .side h2 {
+            font-size: 14px;
+            color: var(--primary);
+            margin: 20px 0 10px;
+            padding: 8px;
+            background: var(--light);
+            border-radius: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 12px;
+        }
+        
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #555;
+        }
+        
+        input, select, textarea, button {
+            font: inherit;
+            transition: all 0.3s;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 12px;
+            background: #fff;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
+        }
+        
+        textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .btn {
+            border: 0;
+            border-radius: var(--radius);
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .red {
+            background: var(--primary);
+            color: #fff;
+        }
+        
+        .red:hover {
+            background: #a00d24;
+        }
+        
+        .black {
+            background: var(--dark);
+            color: #fff;
+        }
+        
+        .black:hover {
+            background: #333;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .actions button {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        /* ============ Main Content ============ */
+        .main {
+            padding: 20px;
+            overflow: auto;
+            min-height: 100vh;
+        }
+        
+        .paper {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+        
+        /* ============ Invoice ============ */
+        .invoice {
+            width: 210mm;
+            min-height: 297mm;
+            background: #fff;
+            margin: auto;
+            padding: 15mm;
+            font-size: 12px;
+            position: relative;
+        }
+        
+
+        
+
+
+        .head {
+            display: grid;
+            grid-template-columns: 130px 1fr 180px;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 4px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            height: 70px;
+            max-width: 130px;
+            object-fit: contain;
+        }
+        
+        .center {
+            text-align: center;
+        }
+        
+        .name {
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: var(--dark);
+        }
+        
+        .sub {
+            color: var(--primary);
+            font-size: 11px;
+            margin-top: 5px;
+        }
+        
+        .title {
+            text-align: left;
+        }
+        
+        .title b {
+            font-size: 21px;
+            color: var(--primary);
+        }
+        
+        .title-info {
+            background: var(--light);
+            padding: 8px;
+            border-radius: 5px;
+            margin-top: 8px;
+        }
+        
+        /* ============ Tables ============ */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        td, th {
+            border: 1px solid var(--border);
+            padding: 8px;
+            font-size: 11px;
+        }
+        
+        th {
+            background: var(--dark);
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        .k {
+            background: var(--light);
+            font-weight: bold;
+            width: 15%;
+        }
+        
+        .items input {
+            border: 0;
+            padding: 5px;
+            border-radius: 4px;
+            background: transparent;
+            font-size: 11px;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .items input:hover {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .items input:focus {
+            background: #fff;
+            border: 1px solid var(--primary);
+            outline: none;
+        }
+        
+        .items .desc input {
+            text-align: right;
+        }
+
+        /* ============ NEW: Textarea for description ============ */
+        .items .desc textarea.desc-input {
+            border: 0;
+            padding: 5px;
+            border-radius: 4px;
+            background: transparent;
+            font-size: 11px;
+            text-align: right;
+            width: 100%;
+            resize: none;
+            overflow: hidden;
+            line-height: 1.6;
+            min-height: 30px; /* ارتفاع حداقلی */
+            transition: background 0.2s, border 0.2s;
+        }
+        
+        .items .desc textarea.desc-input:hover {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .items .desc textarea.desc-input:focus {
+            background: #fff;
+            border: 1px solid var(--primary);
+            outline: none;
+        }
+
+        /* برای چاپ، حذف ظاهر اضافی */
+        @media print {
+            .items .desc textarea.desc-input {
+                border: none;
+                background: transparent;
+                resize: none;
+                overflow: visible;
+                height: auto;
+            }
+        }
+        
+        .delete-btn {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+        }
+        
+        .delete-btn:hover {
+            background: #cc0000;
+        }
+        
+        .sum {
+            width: 45%;
+            margin-right: auto;
+            margin-top: 20px;
+        }
+        
+        .sum td:first-child {
+            background: var(--light);
+            font-weight: bold;
+        }
+        
+        .total td {
+            background: var(--primary) !important;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .notes {
+            border: 1px solid var(--border);
+            margin-top: 20px;
+            padding: 12px;
+            min-height: 60px;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+        
+        .foot {
+            text-align: center;
+            border-top: 2px solid var(--primary);
+            margin-top: 25px;
+            padding-top: 10px;
+            color: #777;
+            font-size: 10px;
+        }
+        
+        /* ============ Toast ============ */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* ============ Responsive ============ */
+        @media(max-width: 900px) {
+            .app {
+                grid-template-columns: 1fr;
+            }
+            .side {
+                position: static;
+                max-height: none;
+            }
+            .main {
+                padding: 10px;
+            }
+            .paper {
+                padding: 10px;
+            }
+            .invoice {
+                width: 100%;
+                min-height: auto;
+            }
+        }
+        
+        @media(max-width: 600px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+            .side {
+                padding: 15px;
+            }
+            .main {
+                padding: 5px;
+            }
+            .paper {
+                padding: 5px;
+            }
+            .head {
+                grid-template-columns: 80px 1fr;
+                gap: 10px;
+            }
+            .title {
+                grid-column: 1/3;
+                text-align: center;
+            }
+            .invoice {
+                padding: 10px;
+                box-shadow: none;
+            }
+            .sum {
+                width: 100%;
+            }
+            .actions {
+                flex-direction: column;
+            }
+        }
+        
+        @page {
+            margin: 0;
+            size: A4;
+        }
+        
+        @media print {
+            .side {
+                display: none;
+            }
+            .app {
+                display: block;
+            }
+            .main, .paper {
+                padding: 0;
+                background: #fff;
+                box-shadow: none;
+            }
+            .invoice {
+                margin: 0;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .a4 {
+                width: 210mm;
+            }
+      
+            .status-bar, .toast {
+                display: none !important;
+            }
+            .delete-btn {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- ============ Sidebar (Controls) ============ -->
+        <aside class="side">
+            <h1>CAVOSH PRO</h1>
+            
+            <h2>📋 اطلاعات فاکتور</h2>
+            <div class="row">
+                <div class="form-group">
+                    <label>ابعاد کاغذ</label>
+                    <select id="size" onchange="update()">
+                        <option value="a4">A4</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>شماره فاکتور</label>
+                    <input id="no" value="1001" oninput="update()">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label>تاریخ صدور</label>
+                    <input id="date" placeholder="1405/06/14" oninput="update()">
+                </div>
+                <div class="form-group">
+                    <label>اعتبار تا</label>
+                    <input id="valid" oninput="update()">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>وضعیت فاکتور</label>
+                <select id="status" onchange="updateStatus()">
+                    <option value="draft">پیش‌نویس</option>
+                    <option value="sent">ارسال شده</option>
+                    <option value="paid">پرداخت شده</option>
+                    <option value="overdue">سررسید گذشته</option>
+                </select>
+            </div>
+            
+            <h2>👤 مشتری</h2>
+            <div class="form-group">
+                <label>نام مشتری / شرکت</label>
+                <input id="customer" oninput="update()" placeholder="نام کامل مشتری">
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label>تلفن</label>
+                    <input id="phone" oninput="update()" placeholder="09xxxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>نماینده</label>
+                    <input id="contact" oninput="update()">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>آدرس</label>
+                <input id="address" oninput="update()" placeholder="آدرس کامل">
+            </div>
+            
+            <div class="form-group">
+                <label>ایمیل</label>
+                <input id="email" oninput="update()" placeholder="example@email.com">
+            </div>
+            
+            <h2>🛠 خدمات</h2>
+            <div class="row">
+                <div class="form-group">
+                    <label>تعرفه خدمات</label>
+                    <select id="tariff">
+
+    <option value="">انتخاب تعرفه خدمات...</option>
+
+    <option value="طراحی گرافیک" data-price="18900000">
+        طراحی گرافیک
+    </option>
+
+    <option value="طراحی و خدمات چاپ" data-price="28900000">
+        طراحی و خدمات چاپ
+    </option>
+
+    <option value="تولید محتوا" data-price="39900000">
+        تولید محتوا
+    </option>
+
+    <option value="مدیریت شبکه‌های اجتماعی" data-price="479000000">
+        مدیریت شبکه‌های اجتماعی
+    </option>
+
+    <option value="تبلیغات دیجیتال" data-price="199900000">
+        تبلیغات دیجیتال
+    </option>
+
+    <option value="طراحی و توسعه وب‌سایت" data-price="64900000">
+        طراحی و توسعه وب‌سایت
+    </option>
+
+    <option value="مشاوره و استراتژی تبلیغاتی" data-price="24900000">
+        مشاوره و استراتژی تبلیغاتی
+    </option>
+
+</select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button class="btn red" onclick="addItem()" style="width: 100%">افزودن +</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>افزودن سریع (توضیحات)</label>
+                <input id="quickDesc" placeholder="توضیح خدمات..." onkeypress="if(event.key==='Enter') addQuickItem()">
+            </div>
+            
+            <h2>💰 مبالغ</h2>
+            <div class="row">
+                <div class="form-group">
+                    <label>تخفیف (ریال)</label>
+                    <input id="discount" type="number" value="0" oninput="totals()">
+                </div>
+                <div class="form-group">
+                    <label>مالیات (%)</label>
+                    <input id="tax" type="number" value="0" oninput="totals()" min="0" max="100">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>توضیحات و شرایط</label>
+                <textarea id="notes" oninput="update()" placeholder="شرایط پرداخت، توضیحات اضافی..."></textarea>
+            </div>
+            
+            <div class="actions">
+                <button class="btn black" onclick="window.print()">🖨 چاپ / PDF</button>
+            </div>
+        </aside>
+        
+        <!-- ============ Main Content (Invoice Preview) ============ -->
+        <main class="main">
+            <div class="paper">
+                <section class="invoice a4" id="invoice">
+                    <div class="head">
+                        <img class="logo" src="./logo01.png" alt="CAVOSH Logo" onerror="this.style.display='none'">
+                        <div class="center">
+                            <div class="name">CAVOSH</div>
+                            <div class="sub">مجموعه تبلیغاتی</div>
+                        </div>
+                        <div class="title">
+                            <b>فاکتور خدمات</b>
+                            <div class="title-info">
+                               <div style="text-align: right; direction: rtl;">
+    <div>شماره: <span id="pno">1001</span></div>
+
+    <div style="margin-top: 5px">
+        وضعیت: <span id="pstatus">پیش‌نویس</span>
+    </div>
+</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <table>
+                        <tr>
+                            <td class="k">تاریخ صدور</td>
+                            <td id="pdate">—</td>
+                            <td class="k">اعتبار تا</td>
+                            <td id="pvalid">—</td>
+                        </tr>
+                    </table>
+                    
+                    <table>
+                        <tr>
+                            <td class="k">مشتری / شرکت</td>
+                            <td id="pcustomer">—</td>
+                            <td class="k">تلفن</td>
+                            <td id="pphone">—</td>
+                        </tr>
+                        <tr>
+                            <td class="k">نماینده</td>
+                            <td id="pcontact">—</td>
+                            <td class="k">ایمیل</td>
+                            <td id="pemail">—</td>
+                        </tr>
+                        <tr>
+                            <td class="k">آدرس</td>
+                            <td colspan="3" id="paddress">—</td>
+                        </tr>
+                    </table>
+                    
+                    <table class="items">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px">ردیف</th>
+                                <th>شرح خدمات</th>
+                                <th style="width: 90px">شروع</th>
+                                <th style="width: 90px">پایان</th>
+                                <th style="width: 60px">تعداد</th>
+                                <th style="width: 70px">واحد</th>
+                                <th style="width: 100px">مبلغ واحد</th>
+                                <th style="width: 110px">جمع</th>
+                            </tr>
+                        </thead>
+                        <tbody id="items"></tbody>
+                    </table>
+                    
+                    <table class="sum">
+                        <tr>
+                            <td>جمع خدمات</td>
+                            <td id="sub">۰ ریال</td>
+                        </tr>
+                        <tr>
+                            <td>تخفیف</td>
+                            <td id="pd">۰ ریال</td>
+                        </tr>
+                        <tr>
+                            <td>مالیات</td>
+                            <td id="pt">۰ ریال</td>
+                        </tr>
+                        <tr class="total">
+                            <td>مبلغ قابل پرداخت</td>
+                            <td id="grand">۰ ریال</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="notes">
+                        <b>توضیحات و شرایط:</b>
+                        <div id="pnotes">—</div>
+                    </div>
+                    
+                    <div class="foot">
+فاکتور حاضر توسط هسته فناور CAVOSH در مرکز رشد واحدهای فناور دانشگاه آزاد اسلامی واحد رودهن تولید و صادر شده است.                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">عملیات با موفقیت انجام شد</div>
+    
+    <script>
+        // ============ State Management ============
+        let rows = [{d: '', s: '', e: '', q: 1, u: 'مورد', p: 0}];
+        let invoiceStatus = 'draft';
+        
+        // ============ Utility Functions ============
+        const formatMoney = (n) => {
+            return (+n || 0).toLocaleString('fa-IR') + ' ریال';
+        };
+        
+        const formatNumber = (n) => {
+            return (+n || 0).toLocaleString('fa-IR');
+        };
+        
+        const escapeHtml = (str) => {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        };
+        
+        const showToast = (message) => {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2000);
+        };
+        
+        // ============ Auto resize textarea ============
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+        
+        // ============ Invoice Operations ============
+        function addItem() {
+            const tariff = document.getElementById('tariff');
+            const selectedOption = tariff.options[tariff.selectedIndex];
+            const description = tariff.value || '';
+            const price = selectedOption.dataset.price ? +selectedOption.dataset.price : 0;
+            
+            rows.push({
+                d: description,
+                s: '',
+                e: '',
+                q: 1,
+                u: 'مورد',
+                p: price
+            });
+            
+            tariff.value = '';
+            render();
+            showToast('آیتم جدید اضافه شد');
+        }
+        
+        function addQuickItem() {
+            const desc = document.getElementById('quickDesc').value.trim();
+            if (desc) {
+                rows.push({
+                    d: desc,
+                    s: '',
+                    e: '',
+                    q: 1,
+                    u: 'مورد',
+                    p: 0
+                });
+                document.getElementById('quickDesc').value = '';
+                render();
+                showToast('آیتم سریع اضافه شد');
+            }
+        }
+        
+        function deleteItem(index) {
+            if (rows.length > 1) {
+                rows.splice(index, 1);
+                render();
+                showToast('آیتم حذف شد');
+            } else {
+                showToast('حداقل یک آیتم باید وجود داشته باشد');
+            }
+        }
+        
+        function updateItem(index, key, value) {
+            rows[index][key] = ['q', 'p'].includes(key) ? +value : value;
+            render();
+        }
+        
+        function render() {
+            const itemsBody = document.getElementById('items');
+            itemsBody.innerHTML = rows.map((row, i) => `
+                <tr>
+                    <td style="text-align: center">${formatNumber(i + 1)}</td>
+                    <td class="desc">
+                        <textarea class="desc-input" rows="1"
+                            oninput="updateItem(${i}, 'd', this.value); autoResize(this);"
+                            placeholder="شرح خدمات...">${escapeHtml(row.d)}</textarea>
+                    </td>
+                    <td>
+                        <input value="${escapeHtml(row.s)}" oninput="updateItem(${i}, 's', this.value)" placeholder="شروع">
+                    </td>
+                    <td>
+                        <input value="${escapeHtml(row.e)}" oninput="updateItem(${i}, 'e', this.value)" placeholder="پایان">
+                    </td>
+                    <td>
+                        <input type="number" value="${row.q}" oninput="updateItem(${i}, 'q', this.value)" min="0">
+                    </td>
+                    <td>
+                        <input value="${escapeHtml(row.u)}" oninput="updateItem(${i}, 'u', this.value)">
+                    </td>
+                    <td>
+                        <input type="number" value="${row.p}" oninput="updateItem(${i}, 'p', this.value)" min="0">
+                    </td>
+                    <td style="text-align: center; font-weight: bold">${formatMoney(row.q * row.p)}</td>
+                    <tr style="text-align: center">
+                        <button class="delete-btn" onclick="deleteItem(${i})" title="حذف">×</button>
+                    </tr>
+                </tr>
+            `).join('');
+            
+            totals();
+            
+            // پس از رندر، ارتفاع همه textarea ها را تنظیم کن
+            document.querySelectorAll('.desc-input').forEach(autoResize);
+        }
+        
+        function totals() {
+            const subtotal = rows.reduce((sum, row) => sum + row.q * row.p, 0);
+            const discount = +document.getElementById('discount').value || 0;
+            const taxRate = +document.getElementById('tax').value || 0;
+            
+            const taxableAmount = Math.max(0, subtotal - discount);
+            const taxAmount = taxableAmount * taxRate / 100;
+            const grandTotal = taxableAmount + taxAmount;
+            
+            document.getElementById('sub').textContent = formatMoney(subtotal);
+            document.getElementById('pd').textContent = formatMoney(discount);
+            document.getElementById('pt').textContent = formatMoney(taxAmount);
+            document.getElementById('grand').textContent = formatMoney(grandTotal);
+        }
+        
+        function update() {
+            const size = document.getElementById('size').value;
+            const invoice = document.getElementById('invoice');
+            invoice.className = 'invoice ' + size;
+            
+            const fields = [
+                ['pno', 'no'],
+                ['pdate', 'date'],
+                ['pvalid', 'valid'],
+                ['pcustomer', 'customer'],
+                ['pphone', 'phone'],
+                ['pcontact', 'contact'],
+                ['paddress', 'address'],
+                ['pemail', 'email'],
+                ['pnotes', 'notes']
+            ];
+            
+            fields.forEach(([previewId, inputId]) => {
+                const element = document.getElementById(previewId);
+                const input = document.getElementById(inputId);
+                if (element && input) {
+                    element.textContent = input.value || '—';
+                }
+            });
+            
+            totals();
+        }
+        
+        function updateStatus() {
+            invoiceStatus = document.getElementById('status').value;
+            document.getElementById('pstatus').textContent = getStatusLabel(invoiceStatus);
+        }
+        
+        function getStatusLabel(status) {
+            const labels = {
+                'draft': 'پیش‌نویس',
+                'sent': 'ارسال شده',
+                'paid': 'پرداخت شده',
+                'overdue': 'سررسید گذشته'
+            };
+            return labels[status] || status;
+        }
+        
+        // ============ Keyboard Shortcuts ============
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+P to print
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+        
+        // ============ Initialize ============
+        render();
+        update();
+        updateStatus();
+    </script>
+</body>
+</html>
